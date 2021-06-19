@@ -26,8 +26,8 @@ const DataTable = ({ title, allData }) => {
           <tr>
             <td></td>
             {allData &&
-              Object.keys(allData[0].data).map((i, key) => (
-                <td key={key}>{i}</td>
+              Object.keys(allData[0].data).map((columnTitle, key) => (
+                <td key={key}>{columnTitle}</td>
               ))}
             <td></td>
           </tr>
