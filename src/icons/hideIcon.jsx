@@ -1,6 +1,6 @@
 import React from "react";
 
-function ExpandIcon(props) {
+function HideIcon(props) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -18,4 +18,4 @@ function ExpandIcon(props) {
   );
 }
 
-export default ExpandIcon;
+export default HideIcon;

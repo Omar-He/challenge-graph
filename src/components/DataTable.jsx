@@ -1,23 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import "./dataTable.css";
-import useStore from "../store/store";
-import ExpandIcon from "../icons/expandIcon";
+import HideIcon from "../icons/hideIcon";
 import CloseIcon from "../icons/closeIcon";
+import useStore from "../store/store";
+import ShowIcon from "../icons/showIcon";
 
-const DataTable = ({ title, allData }) => {
-  const removeItem = useStore((state) => state.removeItem);
-  const [clickedRowKey, setRowKey] = useState();
+const DataTable = ({ title, data }) => {
+  const { expandRow, hideRow, isRowExpanded, removeRow } = useStore();
+  if (!data.length) return null;
 
-  const collapse = (key) => {
-    setRowKey((clickedKey) => (clickedKey === key ? null : key));
-  };
-
-  const remove = (key) => {
-    removeItem(allData, key);
-    setRowKey(null);
-  };
-
-  if (!allData.length) return <div>No Data to show</div>;
   return (
     <div className="main-container">
       <label className="table-title">{title}</label>
@@ -25,46 +16,57 @@ const DataTable = ({ title, allData }) => {
         <thead>
           <tr>
             <td></td>
-            {allData &&
-              Object.keys(allData[0].data).map((columnTitle, key) => (
-                <td key={key}>{columnTitle}</td>
-              ))}
+            {Object.keys(data[0].data).map((columnTitle, key) => (
+              <td key={key}>{columnTitle}</td>
+            ))}
             <td></td>
           </tr>
         </thead>
         <tbody>
-          {allData?.map((row, rowKey) => {
+          {data?.map((row) => {
             return (
-              <React.Fragment key={rowKey}>
+              <React.Fragment key={row.uuid}>
                 <tr>
                   <td>
-                    {Object.keys(row.kids).length > 0 ? (
-                      <span
-                        className="expand-arrow"
-                        onClick={() => collapse(rowKey)}
-                      >
-                        <ExpandIcon />
-                      </span>
-                    ) : null}
+                    {checkIfKidsExist(row.kids) && (
+                      <>
+                        {isRowExpanded(row.uuid) ? (
+                          <span
+                            className="expand-arrow"
+                            onClick={() => hideRow(row.uuid)}
+                          >
+                            <HideIcon />
+                          </span>
+                        ) : (
+                          <span
+                            className="expand-arrow"
+                            onClick={() => expandRow(row)}
+                          >
+                            <ShowIcon />
+                          </span>
+                        )}
+                      </>
+                    )}
                   </td>
                   {Object.values(row.data).map((cellData, cellKey) => {
                     return <td key={cellKey}>{cellData}</td>;
                   })}
                   <td>
-                    <span className="close-icon" onClick={() => remove(rowKey)}>
+                    <span className="close-icon" onClick={() => removeRow(row)}>
                       <CloseIcon />
                     </span>
                   </td>
                 </tr>
-                {Object.keys(row.kids).length > 0 && clickedRowKey === rowKey && (
+
+                {checkIfKidsExist(row.kids) && isRowExpanded(row.uuid) && (
                   <tr>
                     <td
-                      colSpan={Object.keys(allData[0].data).length + 2}
+                      colSpan={Object.keys(data[0].data).length + 2}
                       className="child-table"
                     >
                       <DataTable
                         title={Object.keys(row.kids)[0]}
-                        allData={Object.values(row.kids)[0].records}
+                        data={Object.values(row.kids)[0].records}
                       />
                     </td>
                   </tr>
@@ -77,5 +79,9 @@ const DataTable = ({ title, allData }) => {
     </div>
   );
 };
+
+function checkIfKidsExist(kids) {
+  return Object.values(kids)[0]?.records.length > 0;
+}
 
 export default DataTable;
