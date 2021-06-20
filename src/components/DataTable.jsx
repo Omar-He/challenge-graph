@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./dataTable.scss";
+import "./dataTable.css";
 import useStore from "../store/store";
 import ExpandIcon from "../icons/expandIcon";
 import CloseIcon from "../icons/closeIcon";
