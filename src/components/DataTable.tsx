@@ -4,10 +4,17 @@ import HideIcon from "../icons/hideIcon";
 import CloseIcon from "../icons/closeIcon";
 import useStore from "../store/store";
 import ShowIcon from "../icons/showIcon";
+import {TableRow, kidsType} from "../global";
 
-const DataTable = ({ title, data }) => {
+interface DataTableProps {
+  data: TableRow[];
+  title: string;
+}
+
+
+const DataTable: React.FC<DataTableProps> = ({ title, data }) => {
   const { expandRow, hideRow, isRowExpanded, removeRow } = useStore();
-  if (!data.length) return null;
+  if (!data?.length) return null;
 
   return (
     <div className="main-container">
@@ -80,8 +87,7 @@ const DataTable = ({ title, data }) => {
   );
 };
 
-function checkIfKidsExist(kids) {
+function checkIfKidsExist(kids: kidsType) {
   return Object.values(kids)[0]?.records.length > 0;
 }
-
 export default DataTable;
